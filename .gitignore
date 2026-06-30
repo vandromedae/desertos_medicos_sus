@@ -1,0 +1,52 @@
+# ============ DADOS (NÃO SUBIR DADOS GRANDES!) ============
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/external/*
+!data/external/.gitkeep
+
+# ============ AMBIENTE PYTHON ============
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ============ CONDA ============
+environment.yml
+
+# ============ JUPYTER ============
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# ============ IDE ============
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============ SISTEMA ============
+.DS_Store
+Thumbs.db
+
+# ============ VARIÁVEIS DE AMBIENTE (CHAVES DE API!) ============
+.env
+.env.local
+
+# ============ OUTPUTS PESADOS ============
+output/mapas/*.html
+output/relatorios/*.pdf
+*.log
+
+# ============ CACHE ============
+.cache/
+*.tmp
