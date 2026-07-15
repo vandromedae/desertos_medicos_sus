@@ -1,52 +1,138 @@
-# ============ DADOS (NÃO SUBIR DADOS GRANDES!) ============
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-data/external/*
-!data/external/.gitkeep
+# ============================================================
+# DADOS
+# ============================================================
+data/raw/
+data/processed/
+data/external/
+*.parquet
+*.csv
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.sbn
+*.sbx
+*.fbn
+*.fbx
+*.ain
+*.aih
+*.ixs
+*.mxs
+*.atx
+*.xml
+*.zip
+*.tar.gz
+*.sqlite
+*.db
 
-# ============ AMBIENTE PYTHON ============
+# ============================================================
+# OUTPUTS
+# ============================================================
+output/
+!output/exemplos/
+!output/exemplos/*
+!output/README.md
+
+# ============================================================
+# Python
+# ============================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
-venv/
-.venv/
+*.egg
 *.egg-info/
 dist/
 build/
-*.egg
+.eggs/
+*.whl
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
 
-# ============ CONDA ============
-environment.yml
+# ============================================================
+# Ambientes Virtuais
+# ============================================================
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.conda/
+*.egg-info/
 
-# ============ JUPYTER ============
+# ============================================================
+# Jupyter Notebooks
+# ============================================================
 .ipynb_checkpoints/
-*-checkpoint.ipynb
+*.ipynb
+!notebooks/*.ipynb
+.ipynb_checkpoints/*
 
-# ============ IDE ============
+# ============================================================
+# Testes e Cobertura
+# ============================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# ============================================================
+# IDE e Editores
+# ============================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-# ============ SISTEMA ============
+# ============================================================
+# Sistemas Operacionais
+# ============================================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# ============ VARIÁVEIS DE AMBIENTE (CHAVES DE API!) ============
+# ============================================================
+# Secrets e Configurações Sensíveis
+# ============================================================
 .env
 .env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+credentials/
 
-# ============ OUTPUTS PESADOS ============
-output/mapas/*.html
-output/relatorios/*.pdf
+# ============================================================
+# Logs e Temporários
+# ============================================================
 *.log
-
-# ============ CACHE ============
-.cache/
+logs/
+tmp/
+temp/
 *.tmp
+*.bak
+
+# ============================================================
+# CI/CD e Deploy
+# ============================================================
+.aws/
+.gcp/
+.azure/
