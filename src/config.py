@@ -1,8 +1,10 @@
 """
 Configurações globais do projeto Desertos Médicos SUS.
 
-Centraliza todos os caminhos, constantes da API e parâmetros
-de análise para evitar duplicação e facilitar manutenção.
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 from pathlib import Path
@@ -28,7 +30,7 @@ for path in [DATA_RAW, DATA_PROCESSED, DATA_EXTERNAL, OUTPUT_MAPAS, OUTPUT_RELAT
 
 
 # ============================================================
-# 🏥 API ELASTICNES
+# API ELASTICNES
 # ============================================================
 
 ELASTICNES_BASE_URL: Final[str] = "https://elasticnes.saude.gov.br"
@@ -70,7 +72,7 @@ ELASTICNES_CAMPOS_PROF: Final[list[str]] = [
 
 
 # ============================================================
-# 🩺 PARÂMETROS DE ANÁLISE
+# PARÂMETROS DE ANÁLISE
 # ============================================================
 
 # Prefixo CBO para médicos (conforme MTE/SEPRT)
@@ -101,7 +103,7 @@ LIMIAR_DENSIDADE_MEDICA: Final[dict[str, float]] = {
 
 
 # ============================================================
-# 🎨 PALETAS DE CORES PARA MAPAS
+# PALETAS DE CORES PARA MAPAS
 # ============================================================
 
 PALETA_DENSIDADE_POPULACIONAL: Final[dict[str, str]] = {

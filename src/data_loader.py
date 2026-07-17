@@ -1,10 +1,13 @@
 """
-Módulo de carregamento e download de dados.
 
-Responsável por:
-    - Baixar dados do ElastiCNES via API
-    - Carregar CSVs, Parquets e arquivos .dbc
-    - Gerenciar cache para evitar downloads redundantes
+Módulo de carregamento e download de dados.
+Responsável por baixar dados do ElastiCNES via API, carregar CSVs,
+Parquets e arquivos .dbc, e gerenciar cache para evitar downloads redundantes.
+
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 import time
@@ -142,12 +145,12 @@ class ElasticnesDownloader:
         
         # Verificar cache
         if arquivo_saida.exists() and not force:
-            print(f"️  Cache encontrado: {arquivo_saida.name}")
+            print(f" Cache encontrado: {arquivo_saida.name}")
             return pd.read_csv(arquivo_saida, low_memory=False)
         
         payload = self._build_payload(uf=uf, competencia=competencia, campos=campos)
         
-        print(f"⬇️  Baixando dados de {uf} (competência {competencia})...")
+        print(f"  Baixando dados de {uf} (competência {competencia})...")
         
         try:
             response = requests.post(
@@ -158,14 +161,14 @@ class ElasticnesDownloader:
             )
             
             if response.status_code != 200:
-                print(f"❌ Erro HTTP {response.status_code}: {response.text[:200]}")
+                print(f" Erro HTTP {response.status_code}: {response.text[:200]}")
                 return None
             
             # Salvar e carregar
             with open(arquivo_saida, "wb") as f:
                 f.write(response.content)
             
-            print(f"✅ Download concluído: {arquivo_saida.name}")
+            print(f" Download concluído: {arquivo_saida.name}")
             
             df = pd.read_csv(arquivo_saida, low_memory=False)
             print(f"    {len(df):,} registros baixados")
@@ -173,10 +176,10 @@ class ElasticnesDownloader:
             return df
             
         except requests.exceptions.Timeout:
-            print(f"⏱️  Timeout no download de {uf}")
+            print(f"  Timeout no download de {uf}")
             return None
         except Exception as e:
-            print(f"❌ Erro inesperado: {e}")
+            print(f" Erro inesperado: {e}")
             return None
     
     def download_brasil(
@@ -194,7 +197,7 @@ class ElasticnesDownloader:
         ufs_selecionadas = ufs or UFs_BRASIL
         dfs = []
         
-        print(f"🇧🇷 Iniciando download do Brasil ({len(ufs_selecionadas)} UFs)")
+        print(f" Iniciando download do Brasil ({len(ufs_selecionadas)} UFs)")
         print("=" * 60)
         
         for i, uf in enumerate(ufs_selecionadas, 1):
@@ -209,7 +212,7 @@ class ElasticnesDownloader:
                 time.sleep(2)
         
         if not dfs:
-            print("❌ Nenhum dado foi baixado")
+            print(" Nenhum dado foi baixado")
             return pd.DataFrame()
         
         # Consolidar
@@ -218,8 +221,8 @@ class ElasticnesDownloader:
         df_consolidado.to_csv(arquivo_consolidado, index=False)
         
         print("\n" + "=" * 60)
-        print(f"✅ Brasil consolidado: {len(df_consolidado):,} registros")
-        print(f"   💾 Salvo em: {arquivo_consolidado.name}")
+        print(f" Brasil consolidado: {len(df_consolidado):,} registros")
+        print(f"    Salvo em: {arquivo_consolidado.name}")
         
         return df_consolidado
 

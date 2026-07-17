@@ -35,6 +35,7 @@ Todos os mapas são gerados em `output/mapas/` com página índice navegável.
 
 ### Mapas de Exemplo
 - [Densidade Médica Municipal](output/exemplos/mapa_01_densidade_municipal.html)
+- [Densidade Populacional São Paulo](output/exemplos/mapa_são_paulo.html)
 - [São Paulo Capital - Análise Setorial](output/exemplos/mapa_bivariado_sao_paulo.html)
 - [Campinas - Análise Setorial](output/exemplos/mapa_bivariado_campinas.html)
 
@@ -55,10 +56,10 @@ Onde `W(d)` é uma função de decaimento gaussiano com **β = 0.5**, que reduz 
 
 ### Validação
 
-- ✅ **100 setores testados** via reimplementação independente do algoritmo (loop puro em Python, sem as otimizações vetorizadas do pipeline de produção)
-- ✅ **100% de precisão** (erro relativo < 0.01%, comparado ponto a ponto contra o pipeline de produção)
-- ✅ Teste de borda dedicado, confirmando o tratamento exclusivo do raio de 5km
-- ✅ Classificação por percentis para balanceamento estatístico
+- **100 setores testados** via reimplementação independente do algoritmo (loop puro em Python, sem as otimizações vetorizadas do pipeline de produção)
+- **100% de precisão** (erro relativo < 0.01%, comparado ponto a ponto contra o pipeline de produção)
+- Teste de borda dedicado, confirmando o tratamento exclusivo do raio de 5km
+- Classificação por percentis para balanceamento estatístico
 
 ---
 
@@ -103,11 +104,11 @@ pip install -r requirements.txt
 jupyter lab
 ```
 
-## 📄 Licença
+## Licença
 
 Este projeto é de código aberto e está sob a licença MIT.
 
-## 👤 Autora
+## Autora
 
 **Vanessa Batista** - Cientista de Dados & Engenheira de IA
 - GitHub: [@vandromedae](https://github.com/vandromedae)

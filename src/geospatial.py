@@ -1,5 +1,11 @@
 """
+
 Funções geoespaciais para manipulação de coordenadas e geometrias.
+
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 from typing import Optional

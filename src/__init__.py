@@ -1,12 +1,12 @@
 """
-desertos_medicos_sus.src - Pacote de código reutilizável.
+Pacote de código reutilizável do projeto Desertos Médicos SUS.
+Expõe as principais funções de configuração, carregamento de dados,
+análise e visualização para uso nos notebooks e scripts.
 
-Módulos:
-    - config: Constantes e caminhos do projeto
-    - data_loader: Download e carregamento de dados
-    - geospatial: Funções geoespaciais
-    - analysis: Análises estatísticas e de saúde
-    - visualization: Geração de mapas e visualizações
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 from src.config import (

@@ -1,5 +1,10 @@
 """
 Módulo de análises estatísticas e de saúde pública.
+
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 import pandas as pd

@@ -1,5 +1,10 @@
 """
 Módulo de visualização e geração de mapas interativos.
+
+Autora: Vanessa Batista (@vandromedae)
+Repositório: https://github.com/vandromedae/desertos-medicos-sus
+Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LICENSE)
+
 """
 
 from pathlib import Path
@@ -138,13 +143,13 @@ def mapa_densidade_populacional(
             ).add_to(fg)
         fg.add_to(m)
     
-    _adicionar_titulo(m, "👥 Densidade Populacional por Setor Censitário")
+    _adicionar_titulo(m, " Densidade Populacional por Setor Censitário")
     _adicionar_legenda(m, "Densidade (hab/km²)", PALETA_DENSIDADE_POPULACIONAL)
     folium.LayerControl(collapsed=False).add_to(m)
     
     if output_path:
         m.save(output_path)
-        print(f"💾 Mapa salvo em: {output_path}")
+        print(f" Mapa salvo em: {output_path}")
     
     return m
 
@@ -240,12 +245,12 @@ def mapa_cnes_setores(
             ).add_to(fg_cnes)
         fg_cnes.add_to(m)
     
-    _adicionar_titulo(m, "🏥 Setores Censitários + CNES")
+    _adicionar_titulo(m, " Setores Censitários + CNES")
     folium.LayerControl(collapsed=False).add_to(m)
     
     if output_path:
         m.save(output_path)
-        print(f"💾 Mapa salvo em: {output_path}")
+        print(f" Mapa salvo em: {output_path}")
     
     return m
 
@@ -339,12 +344,12 @@ def mapa_densidade_medica_setorial(
             ).add_to(fg)
         fg.add_to(m)
     
-    _adicionar_titulo(m, "🏥 Densidade Médica SUS por Setor Censitário")
+    _adicionar_titulo(m, "Densidade Médica SUS por Setor Censitário")
     _adicionar_legenda(m, "Médicos por 1.000 hab", PALETA_DENSIDADE_MEDICA)
     folium.LayerControl(collapsed=False).add_to(m)
     
     if output_path:
         m.save(output_path)
-        print(f"💾 Mapa salvo em: {output_path}")
+        print(f" Mapa salvo em: {output_path}")
     
     return m
