@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "Se você utilizar este código, por favor, cite este repositório."
+title: "Desertos Médicos no SUS - Estado de São Paulo (Análise E2SFCA)"
+authors:
+  - family-names: Batista
+    given-names: Vanessa
+    alias: vandromedae    
+version: 1.0.0
+date-released: 2026-07-17
+url: "https://github.com/vandromedae/desertos-medicos-sus"
+repository-code: "https://github.com/vandromedae/desertos-medicos-sus"
+license: MIT
+keywords:
+  - "saúde pública"
+  - "desertos médicos"
+  - "E2SFCA"
+  - "geoprocessamento"
+  - "SUS"
+  - "ciência de dados"
+  - "Python"
+abstract: >
+  Análise geoespacial para identificar desigualdades de acesso a médicos do SUS 
+  em setores censitários do estado de São Paulo. O projeto implementa o método 
+  Enhanced Two-Step Floating Catchment Area (E2SFCA) para revelar desertos 
+  médicos mascarados por médias municipais, cruzando dados do ElastiCNES (DATASUS) 
+  com o Censo Demográfico do IBGE.
