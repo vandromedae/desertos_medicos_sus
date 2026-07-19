@@ -1,0 +1,69 @@
+{
+  "description": "Municípios fixos para comparação de baseline (Baseline A e B). NÃO alterar entre rodadas.",
+  "municipios": [
+    {
+      "cod_mun_ibge": "355030",
+      "nome": "São Paulo",
+      "tipo": "capital_grande",
+      "justificativa": "Maior município, 11.4M hab"
+    },
+    {
+      "cod_mun_ibge": "350950",
+      "nome": "Campinas",
+      "tipo": "interior_grande",
+      "justificativa": "1.1M hab, polo tecnológico"
+    },
+    {
+      "cod_mun_ibge": "354340",
+      "nome": "Ribeirão Preto",
+      "tipo": "interior_medio",
+      "justificativa": "699K hab, região de clube"
+    },
+    {
+      "cod_mun_ibge": "354980",
+      "nome": "São José do Rio Preto",
+      "tipo": "interior_medio",
+      "justificativa": "811K hab, interior noroeste"
+    },
+    {
+      "cod_mun_ibge": "350450",
+      "nome": "Avaré",
+      "tipo": "interior_pequeno",
+      "justificativa": "111K hab"
+    },
+    {
+      "cod_mun_ibge": "350750",
+      "nome": "Botucatu",
+      "tipo": "interior_pequeno",
+      "justificativa": "Dados setoriais disponíveis"
+    },
+    {
+      "cod_mun_ibge": "353570",
+      "nome": "Paraíso",
+      "tipo": "e2sfca_melhor",
+      "justificativa": "Melhor acessibilidade do estado (0.035)"
+    },
+    {
+      "cod_mun_ibge": "350335",
+      "nome": "Arco-Íris",
+      "tipo": "e2sfca_pior",
+      "justificativa": "Pior acessibilidade (0.0), deserto rural"
+    },
+    {
+      "cod_mun_ibge": "351495",
+      "nome": "Embaúba",
+      "tipo": "e2sfca_alto",
+      "justificativa": "2o melhor E2SFCA, validação extrema"
+    }
+  ],
+  "setores_especiais": [
+    {
+      "filtro": "CD_SETOR.startswith('355030805')",
+      "nome": "Capela do Socorro (Paraisópolis)",
+      "tipo": "achado_central",
+      "justificativa": "Proxy para Paraisópolis: 205 setores, 95K hab, E2SFCA moderado em município com boa média",
+      "n_setores": 205,
+      "populacao": 95575
+    }
+  ]
+}
