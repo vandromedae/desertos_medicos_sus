@@ -4,6 +4,7 @@
 data/raw/
 data/processed/
 data/external/
+docs/*
 *.parquet
 *.csv
 *.shp
@@ -29,7 +30,7 @@ data/external/
 # ============================================================
 # OUTPUTS
 # ============================================================
-output/
+output/*
 !output/exemplos/
 !output/exemplos/*
 !output/README.md

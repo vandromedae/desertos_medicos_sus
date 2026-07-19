@@ -34,10 +34,10 @@ A análise em nível setorial revela desigualdades que desaparecem quando os dad
 Todos os mapas são gerados em `output/mapas/` com página índice navegável.
 
 ### Mapas de Exemplo
-- [Densidade Médica Municipal](output/exemplos/mapa_01_densidade_municipal.html)
-- [Densidade Populacional São Paulo](output/exemplos/mapa_são_paulo.html)
-- [São Paulo Capital - Análise Setorial](output/exemplos/mapa_bivariado_sao_paulo.html)
-- [Campinas - Análise Setorial](output/exemplos/mapa_bivariado_campinas.html)
+- [Densidade Médica Estado de São Paulo](output/exemplos/mapa_01_densidade_municipal.html)
+- [Desertos Médicos em SP: Densidade x Acessibilidade (Municipal - E2SFCA)](output/exemplos/mapa_são_paulo.html)
+- [Densidade Populacional - São Paulo](output/exemplos/mapa_são_paulo.html)
+- [Desertos Médicos por Setor - São Paulo](output/exemplos/mapa_bivariado_são_paulo.html)
 
 ## Metodologia
 
@@ -66,7 +66,7 @@ Onde `W(d)` é uma função de decaimento gaussiano com **β = 0.5**, que reduz 
 ## Fontes de Dados
 
 - [ElastiCNES (DATASUS)](https://elasticnes.saude.gov.br/): Profissionais médicos SUS por estabelecimento
-- [IBGE Censo 2022](https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/15774-malhas.html): População por setor censitário e shapefiles
+- [IBGE Censo 2022](https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais.html): População por setor censitário e shapefiles
 
 ## Stack Técnica
 
@@ -82,27 +82,73 @@ Onde `W(d)` é uma função de decaimento gaussiano com **β = 0.5**, que reduz 
 ### Pré-requisitos
 - Python 3.11+
 - Conda (recomendado) ou venv
+- Shapefiles do IBGE (download manual necessário — automação no roadmap):
+
+```bash
+mkdir -p data/external
+# Municípios de SP
+curl -o data/external/SE_Municipios_2025.zip \
+  https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2025/UFs/SE/SE_Municipios_2025.zip
+unzip data/external/SE_Municipios_2025.zip -d data/external/SP_Municipios_2025/
+
+# Setores censitários de SP
+curl -o data/external/SP_setores_CD2022.zip \
+  https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2022/setores/shp/UF/SP_setores_CD2022.zip
+unzip data/external/SP_setores_CD2022.zip -d data/external/SP_setores_CD2022_IBGE/
+```
 
 ### Instalação
 
 ```bash
 # Clonar o repositório
-git clone https://github.com/seu-usuario/desertos-medicos-sus.git
+git clone https://github.com/vandromedae/desertos-medicos-sus.git
 cd desertos-medicos-sus
 
-# Criar ambiente
-conda create -n desertos_medicos python=3.11 -y
-conda activate desertos_medicos
+# Opção 1: Conda (recomendado)
+conda env create -f environment.yml
+conda activate desertos_medicos_sus
 
-# Instalar geoespacial via conda-forge (muito mais estável)
-conda install -c conda-forge geopandas shapely fiona pyproj pyarrow -y
-
-# Instalar o restante via pip
+# Opção 2: pip (geopandas/shapely/fiona/pyproj devem vir de conda-forge)
 pip install -r requirements.txt
-
-# Iniciar Jupyter
-jupyter lab
 ```
+
+### Rodar o Pipeline
+
+```bash
+# Pipeline completo: coleta → pré-processamento → E2SFCA → ~1.296 mapas HTML
+python scripts/run_pipeline.py
+
+# Modo rápido: etapas 1-3 + 2 mapas (ideal para desenvolvimento)
+python scripts/run_pipeline.py --sample
+```
+
+Os dados processados ficam em `data/processed/` e os mapas em `output/mapas/`.
+
+### Rodar via Notebooks (interativo)
+
+```bash
+jupyter lab
+# Seguir na ordem: 01 → 02 → 03 → 04
+```
+
+### Rodar Testes
+
+```bash
+pytest
+```
+
+## Limitações Conhecidas
+
+- Download do shapefile IBGE é manual (automação planejada)
+- Legenda definida mas não renderizada nos mapas setoriais (Mapa 2/4) — em correção
+
+## Como Citar
+
+Se você utilizar este código ou dados, por favor, cite:
+
+> Batista, V. (2026). *Desertos Médicos no SUS - Estado de São Paulo (Análise E2SFCA)*. v1.0.0. Disponível em: https://github.com/vandromedae/desertos-medicos-sus
+
+O arquivo [CITATION.cff](CITATION.cff) também está disponível para ferramentas de citation management.
 
 ## Licença
 

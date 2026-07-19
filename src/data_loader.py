@@ -11,6 +11,7 @@ Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LIC
 """
 
 import time
+import warnings
 from io import StringIO
 from pathlib import Path
 from typing import Optional
@@ -228,14 +229,32 @@ class ElasticnesDownloader:
 
 
 def carregar_parquet(caminho: Path) -> pd.DataFrame:
-    """Carrega arquivo Parquet com validação."""
+    """Carrega arquivo Parquet com validação.
+
+    .. deprecated:: 4.0
+        Use ``pd.read_parquet()`` diretamente.
+    """
+    warnings.warn(
+        "carregar_parquet() está obsoleta. Use pd.read_parquet() diretamente.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if not caminho.exists():
         raise FileNotFoundError(f"Arquivo não encontrado: {caminho}")
     return pd.read_parquet(caminho)
 
 
 def carregar_csv(caminho: Path, **kwargs) -> pd.DataFrame:
-    """Carrega CSV com encoding automático."""
+    """Carrega CSV com encoding automático.
+
+    .. deprecated:: 4.0
+        Use ``pd.read_csv()`` diretamente.
+    """
+    warnings.warn(
+        "carregar_csv() está obsoleta. Use pd.read_csv() diretamente.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if not caminho.exists():
         raise FileNotFoundError(f"Arquivo não encontrado: {caminho}")
     return pd.read_csv(caminho, low_memory=False, **kwargs)

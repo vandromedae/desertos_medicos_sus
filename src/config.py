@@ -81,6 +81,15 @@ CBO_MEDICOS_PREFIX: Final[str] = "225"
 # Competência padrão (YYYYMM)
 COMPETENCIA_DEFAULT: Final[str] = "202605"
 
+# Parâmetros E2SFCA (Enhanced Two-Step Floating Catchment Area)
+RAIO_CAPTURA_M: Final[int] = 5000          # Raio de captura em metros (5 km)
+BETA: Final[float] = 0.5                   # Parâmetro de decaimento gaussiano
+CRS_PROJETADO: Final[str] = "EPSG:31983"   # UTM Zone 23S (metros) para cálculos de distância
+
+# Limites geográficos do Brasil (para validação de coordenadas)
+BRAZIL_LON_RANGE: Final[tuple[float, float]] = (-74.0, -34.0)
+BRAZIL_LAT_RANGE: Final[tuple[float, float]] = (-34.0, 5.0)
+
 # Lista de UFs do Brasil
 UFs_BRASIL: Final[list[str]] = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
@@ -124,6 +133,22 @@ PALETA_DENSIDADE_MEDICA: Final[dict[str, str]] = {
 
 COR_CNES: Final[str] = "#e74c3c"  # Vermelho para estabelecimentos
 COR_SETOR: Final[str] = "#3498db"  # Azul para setores censitários
+
+
+# ============================================================
+# CONVENÇÃO DE NOMES DE COLUNAS DO CENSO
+# ============================================================
+# Colunas brutas do shapefile IBGE Censo 2022 mantêm o nome original:
+#   v0001     → população total
+#   NM_MUN    → nome do município
+#   AREA_KM2  → área em km²
+#   CD_SETOR  → código do setor censitário
+#   CD_MUN    → código do município (7 dígitos)
+#
+# Dados agregados/transformados usam snake_case:
+#   populacao, nm_mun, area_km2, cod_mun_ibge, num_setores
+#
+# Origem: preprocessing.py (cruzar_medicos_populacao, carregar_censo_sp)
 
 
 # ============================================================

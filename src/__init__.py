@@ -18,7 +18,7 @@ from src.config import (
     OUTPUT_RELATORIOS,
 )
 from src.data_loader import ElasticnesDownloader
-from src.analysis import calcular_densidade_medica, identificar_desertos_medicos
+from src.analysis import identificar_desertos_medicos
 from src.visualization import (
     mapa_densidade_populacional,
     mapa_cnes_setores,
@@ -27,7 +27,6 @@ from src.visualization import (
 
 __all__ = [
     "ElasticnesDownloader",
-    "calcular_densidade_medica",
     "identificar_desertos_medicos",
     "mapa_densidade_populacional",
     "mapa_cnes_setores",
