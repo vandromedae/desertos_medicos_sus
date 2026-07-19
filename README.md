@@ -35,9 +35,9 @@ Todos os mapas são gerados em `output/mapas/` com página índice navegável.
 
 ### Mapas de Exemplo
 - [Densidade Médica Estado de São Paulo](output/exemplos/mapa_01_densidade_municipal.html)
-- [Desertos Médicos em SP: Densidade x Acessibilidade (Municipal - E2SFCA)](output/exemplos/mapa_são_paulo.html)
-- [Densidade Populacional - São Paulo](output/exemplos/mapa_são_paulo.html)
-- [Desertos Médicos por Setor - São Paulo](output/exemplos/mapa_bivariado_são_paulo.html)
+- [Desertos Médicos em SP: Densidade x Acessibilidade (Municipal - E2SFCA)](output/exemplos/mapa_03_bivariado_municipal.html)
+- [Densidade Populacional - Osasco](output/exemplos/mapa_osasco.html)
+- [Desertos Médicos por Setor - Atibaia](output/exemplos/mapa_bivariado_atibaia.html)
 
 ## Metodologia
 
