@@ -13,6 +13,7 @@ from typing import Optional
 
 import folium
 import geopandas as gpd
+import jenkspy
 import pandas as pd
 
 from src.config import OUTPUT_MAPAS
@@ -20,16 +21,12 @@ from src.visualization.helpers import adicionar_metadados
 from src.visualization.index import gerar_indice_mapas
 
 
-PALETA_YLORRD = {
-    0:         '#ffffcc',
-    100:       '#ffeda0',
-    500:       '#fed976',
-    1000:      '#feb24c',
-    5000:      '#fd8d3c',
-    10000:     '#fc4e2a',
-    20000:     '#e31a1c',
-    50000:     '#bd0026',
-    float('inf'): '#800026',
+PALETA_DENSIDADE_SETORIAL = {
+    '1. Baixa':  '#ffffb2',
+    '2. Média-Baixa':  '#fecc5c',
+    '3. Média':   '#fd8d3c',
+    '4. Alta':   '#f03b20',
+    '5. Muito Alta': '#800026',
 }
 
 PALETA_BIVARIADA_SETORIAL = {
@@ -51,14 +48,90 @@ LINHAS_OPACITY = 0.40
 PADDING_FIT_BOUNDS = [5, 5]
 
 
-def _cor_para_densidade(densidade):
-    """Retorna a cor da paleta YlOrRd para uma dada densidade."""
-    if densidade == 0 or pd.isna(densidade):
-        return '#f0f0f0'
-    for limite, cor in PALETA_YLORRD.items():
-        if densidade < limite:
-            return cor
-    return PALETA_YLORRD[float('inf')]
+def _classificar_jenks(valores, n_classes=5):
+    """Classifica valores usando Jenks Natural Breaks sobre log10(densidade+1).
+
+    Aplica transformação log10 para comprimir a cauda extrema da distribuição
+    de densidade, depois converte os breaks de volta para a escala original.
+
+    Retorna (categorias, breaks) onde categorias é uma Series com as classes
+    e breaks é a lista de limites de corte na escala original (hab/km²).
+    """
+    import numpy as np
+
+    valores_series = pd.Series(valores)
+    valores_validos = valores_series[(valores_series > 0) & (~valores_series.isna())]
+
+    n_unicos = len(valores_validos.unique())
+    if n_unicos < n_classes:
+        n_classes = max(1, n_unicos)
+    if n_classes < 2:
+        return pd.Series(['1. Baixa'] * len(valores)), [0, float('inf')]
+
+    # Transformação log10 para comprimir cauda extrema
+    log_vals = np.log10(valores_validos.values + 1)
+    log_breaks = jenkspy.jenks_breaks(log_vals.tolist(), n_classes=n_classes)
+
+    # Converter breaks de volta para escala original
+    breaks = [round(10**b - 1, 2) for b in log_breaks]
+
+    breaks_unicos = sorted(set(breaks))
+    if len(breaks_unicos) < len(breaks):
+        breaks = breaks_unicos
+        n_classes = len(breaks) - 1
+
+    categorias = pd.cut(
+        valores_series,
+        bins=breaks,
+        labels=list(PALETA_DENSIDADE_SETORIAL.keys())[:n_classes],
+        include_lowest=True,
+        right=True,
+        duplicates='drop',
+    )
+    categorias = categorias.astype(str).replace('nan', '1. Baixa')
+    return categorias, breaks
+
+
+def _gerar_legenda_densidade(breaks):
+    """Gera HTML de legenda para densidade setorial com limiares Jenks."""
+    n_classes = len(breaks) - 1
+    cores = list(PALETA_DENSIDADE_SETORIAL.values())[:n_classes]
+    rótulos = list(PALETA_DENSIDADE_SETORIAL.keys())[:n_classes]
+
+    itens = ""
+    for i in range(n_classes):
+        inferior = f"{breaks[i]:,.0f}".replace(",", ".")
+        superior = f"{breaks[i+1]:,.0f}".replace(",", ".")
+        itens += f'<span style="color:{cores[i]}">■</span> {inferior} - {superior} hab/km²<br>\n'
+
+    return f'''
+    <div style="position: fixed; bottom: 10px; left: 10px; background: rgba(255,255,255,0.95);
+                padding: 12px; border: 2px solid #333; border-radius: 6px; font-size: 11px; z-index: 1000;
+                box-shadow: 2px 2px 6px rgba(0,0,0,0.3);">
+        <b style="font-size:13px;">📊 Densidade Populacional</b><br>
+        <small>(habitantes por km² — Jenks Natural Breaks)</small><br><br>
+        {itens}
+    </div>
+    '''
+
+
+def _gerar_legenda_bivariada():
+    """Gera HTML de legenda para o mapa bivariado setorial."""
+    itens = ""
+    for categoria, cor in PALETA_BIVARIADA_SETORIAL.items():
+        if categoria in ('Irrelevante', 'Sem dados'):
+            continue
+        itens += f'<span style="color:{cor}">■</span> {categoria}<br>\n'
+
+    return f'''
+    <div style="position: fixed; bottom: 10px; left: 10px; background: rgba(255,255,255,0.95);
+                padding: 12px; border: 2px solid #333; border-radius: 6px; font-size: 11px; z-index: 1000;
+                box-shadow: 2px 2px 6px rgba(0,0,0,0.3); width: 220px;">
+        <b style="font-size:13px;">🏥 Acesso a Médicos</b><br>
+        <small>(Densidade Pop × Acesso E2SFCA)</small><br><br>
+        {itens}
+    </div>
+    '''
 
 
 def _calcular_zoom(bounds):
@@ -141,6 +214,7 @@ def _gerar_mapa_setor_municipio(
     tooltip_aliases,
     output_path,
     titulo_prefixo="Densidade Populacional",
+    legenda_html=None,
 ):
     """Gera um mapa Folium para um único município (setores com polígonos)."""
     bounds = gdf_mun.total_bounds
@@ -158,12 +232,10 @@ def _gerar_mapa_setor_municipio(
     folium.map.CustomPane("labels_topo", z_index=650).add_to(m)
 
     def style_function(feature):
-        categoria = feature['properties'].get('categoria_bivariada',
-                     feature['properties'].get('densidade_pop', 0))
-        if isinstance(categoria, (int, float)):
-            cor = _cor_para_densidade(categoria)
-        else:
-            cor = paleta.get(categoria, '#f0f0f0')
+        props = feature['properties']
+        categoria = props.get('categoria_bivariada',
+                    props.get('categoria_densidade', ''))
+        cor = paleta.get(categoria, '#f0f0f0')
         return {
             'fillColor': cor,
             'fillOpacity': FILL_OPACITY_SETORES,
@@ -218,6 +290,9 @@ def _gerar_mapa_setor_municipio(
     </div>
     '''
     m.get_root().html.add_child(folium.Element(titulo))
+
+    if legenda_html:
+        m.get_root().html.add_child(folium.Element(legenda_html))
 
     m.save(output_path)
     return m
@@ -281,9 +356,20 @@ def mapa_densidade_setorial_por_municipio(
     arquivos_gerados = []
 
     for i, municipio in enumerate(municipios_unicos, 1):
-        gdf_mun = gdf_mapa_setores[gdf_mapa_setores[col_nm_mun] == municipio].copy()
+        gdf_mun = gdf_mapa_setores[gdf_mapa_setores[col_nm_mun] == municipio].copy().reset_index(drop=True)
         if len(gdf_mun) == 0:
             continue
+
+        n_classes = min(5, len(gdf_mun['densidade_pop'].unique()))
+        if n_classes < 2:
+            gdf_mun['categoria_densidade'] = '1. Baixa'
+            breaks = [0, float('inf')]
+        else:
+            gdf_mun['categoria_densidade'], breaks = _classificar_jenks(
+                gdf_mun['densidade_pop'].tolist(), n_classes=n_classes
+            )
+
+        legenda_html = _gerar_legenda_densidade(breaks)
 
         nome_arquivo = municipio.replace(' ', '_').replace('/', '_').lower()
         output_file = output_dir / f'mapa_{nome_arquivo}.html'
@@ -295,11 +381,12 @@ def mapa_densidade_setorial_por_municipio(
             gdf_mun=gdf_mun,
             col_nm_mun=col_nm_mun,
             municipio=municipio,
-            paleta={},  # densidade usa _cor_para_densidade, não paleta dict
+            paleta=PALETA_DENSIDADE_SETORIAL,
             tooltip_fields=tooltip_fields,
             tooltip_aliases=tooltip_aliases,
             output_path=output_file,
             titulo_prefixo="Densidade Populacional",
+            legenda_html=legenda_html,
         )
         arquivos_gerados.append(output_file)
 
@@ -311,24 +398,6 @@ def mapa_densidade_setorial_por_municipio(
 
         if i % 50 == 0:
             print(f"   Progresso: {i}/{len(municipios_unicos)} municípios...")
-
-    legenda_html = '''
-    <div style="position: fixed; bottom: 10px; left: 10px; background: rgba(255,255,255,0.95);
-                padding: 12px; border: 2px solid #333; border-radius: 6px; font-size: 11px; z-index: 1000;
-                box-shadow: 2px 2px 6px rgba(0,0,0,0.3);">
-        <b style="font-size:13px;">📊 Densidade Populacional</b><br>
-        <small>(habitantes por km²)</small><br><br>
-        <span style="color:#800026">■</span> ≥50.000<br>
-        <span style="color:#bd0026">■</span> 20.000 - 50.000<br>
-        <span style="color:#e31a1c">■</span> 10.000 - 20.000<br>
-        <span style="color:#fc4e2a">■</span> 5.000 - 10.000<br>
-        <span style="color:#fd8d3c">■</span> 1.000 - 5.000<br>
-        <span style="color:#feb24c">■</span> 500 - 1.000<br>
-        <span style="color:#fed976">■</span> 100 - 500<br>
-        <span style="color:#ffeda0">■</span> <100<br>
-        <span style="color:#f0f0f0">■</span> Sem população
-    </div>
-    '''
 
     gerar_indice_mapas(
         titulo="🗺️ Mapas de Densidade Populacional - São Paulo",
@@ -416,9 +485,10 @@ def mapa_bivariado_setorial_por_municipio(
 
     entries = []
     arquivos_gerados = []
+    legenda_html = _gerar_legenda_bivariada()
 
     for i, municipio in enumerate(municipios_unicos, 1):
-        gdf_mun = gdf_mapa_setores[gdf_mapa_setores[col_nm_mun] == municipio].copy()
+        gdf_mun = gdf_mapa_setores[gdf_mapa_setores[col_nm_mun] == municipio].copy().reset_index(drop=True)
         if len(gdf_mun) == 0:
             continue
 
@@ -442,6 +512,7 @@ def mapa_bivariado_setorial_por_municipio(
             tooltip_aliases=tooltip_aliases,
             output_path=output_file,
             titulo_prefixo="Desertos Médicos por Setor",
+            legenda_html=legenda_html,
         )
         arquivos_gerados.append(output_file)
 

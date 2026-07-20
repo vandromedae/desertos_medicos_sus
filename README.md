@@ -82,20 +82,8 @@ Onde `W(d)` é uma função de decaimento gaussiano com **β = 0.5**, que reduz 
 ### Pré-requisitos
 - Python 3.11+
 - Conda (recomendado) ou venv
-- Shapefiles do IBGE (download manual necessário — automação no roadmap):
 
-```bash
-mkdir -p data/external
-# Municípios de SP
-curl -o data/external/SE_Municipios_2025.zip \
-  https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2025/UFs/SE/SE_Municipios_2025.zip
-unzip data/external/SE_Municipios_2025.zip -d data/external/SP_Municipios_2025/
-
-# Setores censitários de SP
-curl -o data/external/SP_setores_CD2022.zip \
-  https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2022/setores/shp/UF/SP_setores_CD2022.zip
-unzip data/external/SP_setores_CD2022.zip -d data/external/SP_setores_CD2022_IBGE/
-```
+> Os shapefiles do IBGE e os dados do ElastiCNES são baixados automaticamente na primeira execução do pipeline.
 
 ### Instalação
 
@@ -136,11 +124,6 @@ jupyter lab
 ```bash
 pytest
 ```
-
-## Limitações Conhecidas
-
-- Download do shapefile IBGE é manual (automação planejada)
-- Legenda definida mas não renderizada nos mapas setoriais (Mapa 2/4) — em correção
 
 ## Como Citar
 

@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from src.analysis import classificar_densidade_medica
-from src.config import DATA_EXTERNAL
+from src.config import SHAPEFILE_SETORES_SP
 
 
 def padronizar_campos_medicos(df: pd.DataFrame) -> pd.DataFrame:
@@ -71,9 +71,7 @@ def carregar_censo_sp() -> tuple[gpd.GeoDataFrame, pd.DataFrame]:
         Tupla (gdf_censo, df_censo) com GeoDataFrame completo e DataFrame
         filtrado
     """
-    shapefile_path = (
-        DATA_EXTERNAL / "SP_setores_CD2022_IBGE" / "SP_setores_CD2022.shp"
-    )
+    shapefile_path = SHAPEFILE_SETORES_SP
 
     gdf_censo = gpd.read_file(shapefile_path)
 

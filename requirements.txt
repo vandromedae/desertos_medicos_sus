@@ -21,6 +21,11 @@ seaborn>=0.13.0
 folium>=0.15.0
 
 # ==========================================
+# 📐 Classificação Estatística
+# ==========================================
+jenkspy>=0.4.0           # Jenks Natural Breaks para classificação de mapas
+
+# ==========================================
 # 🌐 API e Rede
 # ==========================================
 requests>=2.31.0         # Download ElastiCNES

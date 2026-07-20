@@ -250,3 +250,64 @@ class TestGerarIndiceMetadados:
         content = output.read_text(encoding="utf-8")
         assert 'name="description"' in content
         assert "E2SFCA" in content
+
+
+class TestClassificarJenks:
+    """Testes para _classificar_jenks."""
+
+    def test_returns_correct_number_of_classes(self):
+        from src.visualization.per_municipality import _classificar_jenks
+        valores = [10, 20, 30, 100, 200, 300, 1000, 2000, 3000]
+        categorias, breaks = _classificar_jenks(valores, n_classes=4)
+        assert len(categorias) == 9
+        assert len(breaks) == 5  # n_classes + 1
+
+    def test_all_values_in_some_class(self):
+        from src.visualization.per_municipality import _classificar_jenks
+        valores = [5, 15, 25, 35, 45]
+        categorias, breaks = _classificar_jenks(valores, n_classes=3)
+        assert not categorias.isna().any()
+
+    def test_fewer_classes_when_insufficient_data(self):
+        from src.visualization.per_municipality import _classificar_jenks
+        valores = [10, 20]
+        categorias, breaks = _classificar_jenks(valores, n_classes=4)
+        assert len(categorias) == 2
+        assert len(breaks) <= 3  # fewer breaks than requested
+
+    def test_single_value_returns_one_class(self):
+        from src.visualization.per_municipality import _classificar_jenks
+        valores = [100, 100, 100]
+        categorias, breaks = _classificar_jenks(valores, n_classes=4)
+        assert all(c == '1. Baixa' for c in categorias)
+
+
+class TestGerarLegendaDensidade:
+    """Testes para _gerar_legenda_densidade."""
+
+    def test_contains_jenks_label(self):
+        from src.visualization.per_municipality import _gerar_legenda_densidade
+        html = _gerar_legenda_densidade([0, 100, 500, 1000, 5000])
+        assert "Jenks Natural Breaks" in html
+
+    def test_contains_break_values(self):
+        from src.visualization.per_municipality import _gerar_legenda_densidade
+        html = _gerar_legenda_densidade([0, 100, 500, 1000, 5000])
+        assert "100" in html
+        assert "5.000" in html
+
+
+class TestGerarLegendaBivariada:
+    """Testes para _gerar_legenda_bivariada."""
+
+    def test_contains_category_labels(self):
+        from src.visualization.per_municipality import _gerar_legenda_bivariada
+        html = _gerar_legenda_bivariada()
+        assert "Alta + Baixo" in html
+        assert "Baixa + Baixo" in html
+
+    def test_excludes_irrelevante(self):
+        from src.visualization.per_municipality import _gerar_legenda_bivariada
+        html = _gerar_legenda_bivariada()
+        assert "Irrelevante" not in html
+        assert "Sem dados" not in html

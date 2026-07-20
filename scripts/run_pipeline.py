@@ -43,10 +43,15 @@ def _timestamp() -> str:
 def etapa_1_coleta() -> None:
     """Coleta: download do ElastiCNES + filtragem de médicos."""
     from src.analysis import filtrar_medicos, deduplicar_medicos_por_local
-    from src.data_loader import ElasticnesDownloader
+    from src.data_loader import ElasticnesDownloader, ShapefileDownloader
 
     print(f"\n[{_timestamp()}] Etapa 1/4 — Coleta e exploração")
     print("-" * 60)
+
+    # Garantir shapefiles IBGE antes de qualquer processamento
+    print("  Verificando shapefiles IBGE...")
+    sf_downloader = ShapefileDownloader(output_dir=DATA_EXTERNAL)
+    sf_downloader.garantir_shapefiles_sp()
 
     downloader = ElasticnesDownloader(output_dir=DATA_EXTERNAL)
     df_profissionais = downloader.download_uf(
@@ -166,7 +171,7 @@ def etapa_3_analise() -> None:
     if not shapefile_path.exists():
         raise FileNotFoundError(
             f"Shapefile não encontrado: {shapefile_path}\n"
-            "Baixe de: https://ftp.ibge.gov.br/Censos/Censo_Demografico_2022/"
+            "Execute o pipeline novamente para baixar automaticamente."
         )
     gdf_setores = gpd.read_file(shapefile_path)
     print(f"  Setores censitários: {len(gdf_setores):,}")

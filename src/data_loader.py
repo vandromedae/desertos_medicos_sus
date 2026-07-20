@@ -12,6 +12,7 @@ Licença: MIT (https://github.com/vandromedae/desertos-medicos-sus/blob/main/LIC
 
 import time
 import warnings
+import zipfile
 from io import StringIO
 from pathlib import Path
 from typing import Optional
@@ -27,6 +28,8 @@ from src.config import (
     ELASTICNES_CSV_ENDPOINT,
     ELASTICNES_HEADERS,
     ELASTICNES_INDEX_ID,
+    IBGE_URL_MUNICIPIOS_SP,
+    IBGE_URL_SETORES_SP,
     TIMEOUT_DOWNLOAD,
     UFs_BRASIL,
 )
@@ -226,6 +229,84 @@ class ElasticnesDownloader:
         print(f"    Salvo em: {arquivo_consolidado.name}")
         
         return df_consolidado
+
+
+class ShapefileDownloader:
+    """
+    Download automático de shapefiles do IBGE.
+
+    Verifica se o .shp já existe; se não, baixa o .zip e extrai.
+
+    Exemplo:
+        dl = ShapefileDownloader()
+        dl.garantir_shapefiles_sp()
+    """
+
+    def __init__(self, output_dir: Path = DATA_EXTERNAL):
+        self.output_dir = output_dir
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    def _baixar_e_extrair(
+        self,
+        url: str,
+        zip_filename: str,
+        extract_dir: Path,
+        shp_filename: str,
+        force: bool = False,
+    ) -> Path:
+        """
+        Baixa um zip do IBGE e extrai se o .shp não existir.
+
+        Retorna o caminho do .shp extraído.
+        """
+        shp_path = extract_dir / shp_filename
+        if shp_path.exists() and not force:
+            print(f"  Shapefile encontrado: {shp_path}")
+            return shp_path
+
+        zip_path = self.output_dir / zip_filename
+
+        print(f"  Baixando {zip_filename}...")
+        response = requests.get(url, timeout=TIMEOUT_DOWNLOAD)
+        response.raise_for_status()
+
+        with open(zip_path, "wb") as f:
+            f.write(response.content)
+        mb = len(response.content) / 1024 / 1024
+        print(f"  Download concluído: {zip_path.name} ({mb:.1f} MB)")
+
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(zip_path, "r") as zf:
+            zf.extractall(extract_dir)
+        print(f"  Extraído em: {extract_dir}")
+
+        zip_path.unlink()
+        return shp_path
+
+    def baixar_municipios_sp(self, force: bool = False) -> Path:
+        """Baixa shapefile de municípios de SP (IBGE 2025)."""
+        return self._baixar_e_extrair(
+            url=IBGE_URL_MUNICIPIOS_SP,
+            zip_filename="SE_Municipios_2025.zip",
+            extract_dir=self.output_dir / "SP_Municipios_2025",
+            shp_filename="SP_Municipios_2025.shp",
+            force=force,
+        )
+
+    def baixar_setores_sp(self, force: bool = False) -> Path:
+        """Baixa shapefile de setores censitários de SP (Censo 2022)."""
+        return self._baixar_e_extrair(
+            url=IBGE_URL_SETORES_SP,
+            zip_filename="SP_setores_CD2022.zip",
+            extract_dir=self.output_dir / "SP_setores_CD2022_IBGE",
+            shp_filename="SP_setores_CD2022.shp",
+            force=force,
+        )
+
+    def garantir_shapefiles_sp(self, force: bool = False) -> None:
+        """Baixa ambos os shapefiles de SP se não existirem."""
+        self.baixar_municipios_sp(force=force)
+        self.baixar_setores_sp(force=force)
 
 
 def carregar_parquet(caminho: Path) -> pd.DataFrame:

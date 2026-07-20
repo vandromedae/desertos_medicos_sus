@@ -152,6 +152,28 @@ COR_SETOR: Final[str] = "#3498db"  # Azul para setores censitários
 
 
 # ============================================================
+# ️ SHAPEFILES IBGE
+# ============================================================
+
+IBGE_URL_MUNICIPIOS_SP: Final[str] = (
+    "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/"
+    "malhas_municipais/municipio_2025/UFs/SE/SE_Municipios_2025.zip"
+)
+IBGE_URL_SETORES_SP: Final[str] = (
+    "https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/"
+    "malhas_de_setores_censitarios__divisoes_intramunicipais/censo_2022/"
+    "setores/shp/UF/SP_setores_CD2022.zip"
+)
+
+SHAPEFILE_MUNICIPIOS_SP: Final[Path] = (
+    DATA_EXTERNAL / "SP_Municipios_2025" / "SP_Municipios_2025.shp"
+)
+SHAPEFILE_SETORES_SP: Final[Path] = (
+    DATA_EXTERNAL / "SP_setores_CD2022_IBGE" / "SP_setores_CD2022.shp"
+)
+
+
+# ============================================================
 # ️ PARÂMETROS DE DOWNLOAD
 # ============================================================
 
